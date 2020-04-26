@@ -11,33 +11,32 @@ import tkinter as tk
 class Talentback:
     def __init__(self):
         self.window = tk.Tk()
-        self.window.title = "达人推后台助手"
         self.window.geometry('600x400')
         self.window.resizable(width=False, height=False)
         self.base_url = "http://api.etest.darentui.com/"
-        # frame1= tk.Frame(self.window)
         self.login_face()
         self.get_method()
         self.main_face()
+        self.window.title = "达人推后台助手"
         self.window.mainloop()       
 
 
     def login_face(self):
-        face = tk.Frame(self.window, width=380, height=270, bg='white')
+        face = tk.Frame(self.window)
         face.pack()
         # 第一行
         l_username = tk.Label(face,text='用户名：')
-        l_username.grid(row=0, sticky=tk.W)
+        l_username.grid(row=0)
         username = tk.Entry(face)
-        username.grid(row=0,column=1,sticky=tk.E)
+        username.grid(row=0,column=1)
         # 2
         l_password = tk.Label(face,text='密码：')
-        l_password.grid(row=1, sticky=tk.W)
+        l_password.grid(row=1)
         password = tk.Entry(face, show='*')
-        password.grid(row=1, column=1, sticky=tk.E)
+        password.grid(row=1, column=1)
         # 3
         l_msg = tk.Label(face, text='')
-        l_msg.grid(row=3)
+        l_msg.grid(row=4)
 
         def go_login():
             phone_str = username.get()
@@ -59,6 +58,9 @@ class Talentback:
             print(str(rc), type(rc))
             if rc == 404 or rc == 400:
                 l_msg['text'] = req_data.get("detail")
+                return
+            face.place_forget()
+            self.main_face()
             logger.info(req_data)
 
         login_button = tk.Button(face, text='登录',  width=10, command=go_login)
@@ -71,9 +73,9 @@ class Talentback:
         # } 
         # 4
         
-
     def main_face(self):
-        pass
+        face = tk.Frame(self.window)
+        face.pack()
 
     def get_method(self):
         pass
