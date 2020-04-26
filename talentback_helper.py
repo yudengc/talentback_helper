@@ -11,12 +11,11 @@ import tkinter as tk
 class Talentback:
     def __init__(self):
         self.window = tk.Tk()
+        self.token = None
         self.window.geometry('600x400')
         self.window.resizable(width=False, height=False)
         self.base_url = "http://api.etest.darentui.com/"
         self.login_face()
-        self.get_method()
-        self.main_face()
         self.window.title = "达人推后台助手"
         self.window.mainloop()       
 
@@ -59,9 +58,11 @@ class Talentback:
             if rc == 404 or rc == 400:
                 l_msg['text'] = req_data.get("detail")
                 return
-            face.place_forget()
-            self.main_face()
-            logger.info(req_data)
+            else:
+                self.token = req_data.get('token')
+                face.forget()
+                self.main_face()
+                logger.info(req_data)
 
         login_button = tk.Button(face, text='登录',  width=10, command=go_login)
         exit_button = tk.Button(face, text='退出',  width=10, command=self.window.destroy)
@@ -76,10 +77,22 @@ class Talentback:
     def main_face(self):
         face = tk.Frame(self.window)
         face.pack()
+        button_list = self.get_method()
+        for this_bt in button_list:
+            this_button = tk.Button(face, text=this_bt,  width=10)
+            this_button.grid()        
+            
+        
 
     def get_method(self):
-        pass
-
+        # headers = {
+        #     "Content-Type": "application/json",
+        #     # "Authorier": self.token
+        # }
+        # req_obj = requests.get(self.base_url+"api/v1/oss/helper_method/", headers=headers)
+        # req_data = json.loads(req_obj.content)
+        # return [req_data]
+        return ['测试1', '测试2', '测试3','1','2','3','4','5','6','7','8','9','11','22','21','22','33','411']
 
 
 if __name__ == "__main__":
