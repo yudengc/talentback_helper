@@ -19,10 +19,11 @@ class Talentback:
         self.token = None
         self.width = 400
         self.heigth = 200
+        self.now_frame = None
         self.window.geometry('{}x{}'.format(self.width, self.heigth))
         # self.window.resizable(width=False, height=False)
         self.window.minsize(400, 200)
-        self.window.maxsize(400, 600)
+        self.window.maxsize(800, 400)
         self.base_url = "http://api.etest.darentui.com/"        
         self.menu()
         # self.login_face()
@@ -110,8 +111,8 @@ class Talentback:
         }
         req_obj = requests.get(self.base_url+"api/v1/helper/get-method/", headers=headers)
         req_data = json.loads(req_obj.content)
-        # return req_data
-        return range(20)
+        return req_data
+        # return ['达人关系修复{}'.format(i) for i in range(20)]
 
     def create_method(self, this_bt):
         return print(1)
@@ -123,32 +124,48 @@ class Talentback:
         this_method = getattr(requests, method)
         this_url = this_bt['url']
         # lista = ["funca","funcb","funcc"]
-        
         # for fn in lista:
         #     exec(FUNC_TEMPLATE.format(func=fn))
-        # local_vars = dict(locals().items())
-        # funcs = [local_vars[f] for f in lista]
         eval(FUNC_TEMPLATE.format())
         rep_content = tk.Text(window, width=50, height=20)
         this_method(this_url, headers=headers)
 
-    def main_face(self):        
-        method_frame = tk.LabelFrame(self.window, width=12, background='red')
-        method_frame.pack(side='left', fill='both')
+    def main_face(self):
+        main_frame = tk.Frame(self.window)
+        main_frame.pack(expand='yes', fill="both")
         button_list = self.get_method()
-        row = 0
-        for this_bt in button_list:
-            title = str(this_bt)
-            # title = this_bt['title']
-            # bt_method = self.create_method(this_bt)
-            # if not bt_method:
-            #     continue
-            this_button = tk.Button(method_frame, text=title[:5],  width=10, height=2)
-            this_button.grid(row=row, column=0)            
-            row += 1
-        
-        effect_frame = tk.LabelFrame(self.window, text="哦哦", background='yellow')
-        effect_frame.pack(side='right', padx=10, fill='both', expand='yes')
+
+        def select_method(*args):
+            this_index = listbox.curselection()[0]
+            if self.now_select == this_index:
+                return
+            else:
+                self.now_select = this_index
+            print(button_list[this_index])
+            print(listbox.curselection()[0])
+
+        left_frame = tk.LabelFrame(main_frame, text='选择功能')
+        left_frame.pack(side='left', fill='both', padx=3)
+        wellcome_frame = tk.LabelFrame(main_frame, text='操作')
+        wellcome_frame.pack(side='left', expand='yes', fill='both')
+        tk.Label(wellcome_frame, text='没事多请技术部喝奶茶\n不然出事了我们才不会理你呢', font=('Arial', 14)).place(x=13, y=60)
+        self.now_frame = wellcome_frame
+
+        listbox = tk.Listbox(
+            left_frame, width=12, font=('Arial', 10), 
+            listvariable=tk.StringVar(value=[i['title'] for i in button_list]), 
+            selectmode="browse"
+        )
+        listbox.pack(side='left', fill='both')
+        listbox.bind("<<ListboxSelect>>", select_method)
+        listbox.pack(side='left', fill='y')
+
+        y_scr = tk.Scrollbar(left_frame)
+        listbox.config(yscrollcommand=y_scr.set)
+        y_scr.config(command=listbox.yview)
+        y_scr.pack(side='right', fill='y')
+
+
 
 
 FUNC_TEMPLATE = '''
