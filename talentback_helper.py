@@ -92,6 +92,16 @@ class Talentback:
         # req_obj = requests.get(self.base_url+"api/v1/oss/helper_method/", headers=headers)
         # req_data = json.loads(req_obj.content)
         # return [req_data]
+        # {'title': '注销', 'api/v1/asfasdf/', 
+        # 'canshu':{
+        #     "username": 'text',
+        #     "ss"
+        # }
+        # }
+        # post api/v1/asfasdf/  {
+        #     "username": username.get()
+        #     "ss": ss.get()
+        # }
         return ['测试1', '测试2', '测试3','1','2','3','4','5','6','7','8','9','11','22','21','22','33','411']
 
 
