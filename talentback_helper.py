@@ -6,12 +6,6 @@ import requests
 import sys
 import tkinter as tk
 
-
-FUNC_TEMPLATE = '''
-def go_{button}():
-
-'''
-
 class Talentback:
     def __init__(self):
         self.window = tk.Tk()
@@ -20,6 +14,8 @@ class Talentback:
         self.width = 400
         self.heigth = 200
         self.now_frame = None
+        self.now_select = None
+        self.main_frame = None
         self.window.geometry('{}x{}'.format(self.width, self.heigth))
         # self.window.resizable(width=False, height=False)
         self.window.minsize(400, 200)
@@ -112,43 +108,73 @@ class Talentback:
         req_obj = requests.get(self.base_url+"api/v1/helper/get-method/", headers=headers)
         req_data = json.loads(req_obj.content)
         return req_data
-        # return ['达人关系修复{}'.format(i) for i in range(20)]
 
-    def create_method(self, this_bt):
-        return print(1)
+    def get_wellcome(self):
         headers = {
             "Content-Type": "application/json",
             "Authorization": self.token
         }
+        req_obj = requests.get(self.base_url+"api/v1/helper/get-wellcome/", headers=headers)
+        return json.loads(req_obj.content)
+
+    def create_method(self, this_bt):
+        def go_0(self):
+            print(self)
+            this_frame = tk.LabelFrame(self.main_frame, text='操作')
+            this_frame.pack(side='left', expand='yes', fill='both')
+            self.now_frame = this_frame
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": self.token
+            }
+            this_method = getattr(requests, 'get')
+            # this_method(self.base_url+'api/v1/helper/test/', headers=headers, data=json.dumps(data))
+            # args = json.loads({args})
+            args = [
+                {
+                    "arg_name": "username",
+                    "type": "Entry",
+                    "tips": "用户名",
+                }
+            ]
+            for arg in args:
+                tk_type_name = arg['type']
+                tk_type = getattr(tk, tk_type_name)
+                v = tk.StringVar
+                entry_usr_name = tk.Entry(this_frame, textvariable=v, font=('Arial', 14))
+                entry_usr_name.pack()
+        setattr(self, 'go_0', go_0)
+        return
         method = this_bt['method'].lower()
         this_method = getattr(requests, method)
-        this_url = this_bt['url']
-        # lista = ["funca","funcb","funcc"]
-        # for fn in lista:
-        #     exec(FUNC_TEMPLATE.format(func=fn))
+        this_url = this_bt['url']       
         eval(FUNC_TEMPLATE.format())
         rep_content = tk.Text(window, width=50, height=20)
-        this_method(this_url, headers=headers)
+        this_method(this_url, headers=headers)    
 
     def main_face(self):
-        main_frame = tk.Frame(self.window)
-        main_frame.pack(expand='yes', fill="both")
+        self.main_frame = tk.Frame(self.window)
+        self.main_frame.pack(expand='yes', fill="both")
         button_list = self.get_method()
+        wellcome_str = self.get_wellcome()
+        self.create_method(button_list)
 
         def select_method(*args):
             this_index = listbox.curselection()[0]
             if self.now_select == this_index:
                 return
-            else:
-                self.now_select = this_index
-            print(button_list[this_index])
-            print(listbox.curselection()[0])
+            self.now_select = this_index
+            self.now_frame.destroy()
+            this_func_name = 'go_{}'.format(this_index)
+            this_func = getattr(self, this_func_name)
+            this_func(self)
+        
 
-        left_frame = tk.LabelFrame(main_frame, text='选择功能')
+        left_frame = tk.LabelFrame(self.main_frame, text='选择功能')
         left_frame.pack(side='left', fill='both', padx=3)
-        wellcome_frame = tk.LabelFrame(main_frame, text='操作')
+        wellcome_frame = tk.LabelFrame(self.main_frame, text='操作')
         wellcome_frame.pack(side='left', expand='yes', fill='both')
-        tk.Label(wellcome_frame, text='没事多请技术部喝奶茶\n不然出事了我们才不会理你呢', font=('Arial', 14)).place(x=13, y=60)
+        tk.Label(wellcome_frame, text=wellcome_str, font=('Arial', 11), wraplength=260, anchor='center').place(x=13, y=13)
         self.now_frame = wellcome_frame
 
         listbox = tk.Listbox(
@@ -166,13 +192,18 @@ class Talentback:
         y_scr.pack(side='right', fill='y')
 
 
-
-
 FUNC_TEMPLATE = '''
-def go_{button}():
-    face = tk.Frame(self.window)
-    face.pack()
-'''
+def go_{index}(self):
+    this_frame = tk.LabelFrame(main_frame, text='操作')
+    this_frame.pack(side='left', expand='yes', fill='both')
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": self.token
+    }
+    this_method = getattr(requests, {method})
+    this_method(self.base_url+{url}, headers=headers, data=json.dumps(data))
+    args = json.loads({args})
+# '''
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
