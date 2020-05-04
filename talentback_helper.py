@@ -150,7 +150,7 @@ class Talentback:
                     tips = arg["tips"]
                     if tk_type_name == '输入':
                         tk.Label(this_frame, text=tips).grid(row=row, column=column, pady=2, padx=2)
-                        v = tk.StringVar
+                        v = tk.StringVar()
                         arg_widget = tk.Entry(this_frame, textvariable=v)
                         arg_widget.grid(row=row, column=column+1, pady=2, padx=2)                    
                     elif tk_type_name == '单选':
