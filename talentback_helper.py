@@ -26,6 +26,7 @@ class Talentback:
         self.window.minsize(400, 200)
         self.window.maxsize(400, 800)
         self.base_url = "http://api.etest.darentui.com/"
+        # self.base_url = "http://api.e.darentui.com/"
         # self.base_url = "http://119.23.109.99:8083/"
         self.update()
         self.menu()
