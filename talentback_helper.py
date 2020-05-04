@@ -130,7 +130,7 @@ class Talentback:
 
     def create_method(self, method_list):
         func_template = '''def {func_name}(self):
-            this_frame = tk.LabelFrame(self.main_frame, text='注销')
+            this_frame = tk.LabelFrame(self.main_frame, text='操作')
             this_frame.pack(side='left', expand='yes', fill='both')
             self.now_frame = this_frame                           
             args = {args}
@@ -203,13 +203,17 @@ class Talentback:
                     rep = this_method(self.base_url+get_url, data=json.dumps(data), headers=headers)
                 elif get_method == 'get':
                     rep = this_method(self.base_url+get_url, params=data, headers=headers)
-                response_data = "请求失败, 找一下技术哥哥看看吧"      
-                if not rep:
+                response_data = "请求失败, 找一下技术哥哥看看吧"
+                try:
+                    print(rep.content)
+                    if not rep:
+                        self.rep_label.config(fg='red')
+                    elif int(str(rep.status_code)[0]) > 4:
+                        self.rep_label.config(fg='red')
+                    if rep is not None:                    
+                        response_data = json.loads(rep.content).get("detail", response_data)
+                except:
                     self.rep_label.config(fg='red')
-                elif int(str(rep.status_code)[0]) > 4:
-                    self.rep_label.config(fg='red')
-                if rep is not None:                    
-                    response_data = json.loads(rep.content).get("detail", response_data)
                 rep_data.set(response_data)
 
             exec_button = tk.Button(this_frame, text='执行', command=send_request)
