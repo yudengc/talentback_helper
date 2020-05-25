@@ -8,8 +8,8 @@ import requests
 import sys
 import tkinter as tk
 
-
 __VERSION__ = "1.0"
+
 
 class Talentback:
     def __init__(self):
@@ -25,8 +25,8 @@ class Talentback:
         # self.window.resizable(width=False, height=False)
         self.window.minsize(400, 200)
         self.window.maxsize(400, 800)
-        self.base_url = "http://api.etest.darentui.com/"
-        # self.base_url = "http://api.e.darentui.com/"
+        # self.base_url = "http://api.etest.darentui.com/"
+        self.base_url = "http://api.e.darentui.com/"
         # self.base_url = "http://119.23.109.99:8083/"
         self.update()
         self.menu()
@@ -35,6 +35,11 @@ class Talentback:
         self.window.mainloop()
 
     def update(self):
+        # TODO: 启动时检查更新并热更
+        pass
+
+    def dingtalk(self):
+        # TODO: 钉钉审核功能
         pass
 
     def menu(self):
@@ -43,9 +48,11 @@ class Talentback:
         menubar.add_cascade(label='点我', menu=filemenu)
         menubar.add_cascade(label='点我', menu=filemenu)
         menubar.add_cascade(label='点我', menu=filemenu)
-        menubar.add_cascade(label='点我', menu=filemenu)        
+        menubar.add_cascade(label='点我', menu=filemenu)
+
         def do_job():
             pass
+
         filemenu.add_command(label='★', command=do_job)
         filemenu.add_command(label='邓', command=do_job)
         filemenu.add_command(label='钰', command=do_job)
@@ -57,7 +64,6 @@ class Talentback:
         # filemenu.add_separator()  
         # filemenu.add_command(label='退出', command=self.window.quit)
         self.window.config(menu=menubar)
-
 
     def login_face(self):
         face = tk.Frame(self.window)
@@ -71,7 +77,7 @@ class Talentback:
         var_usr_name = tk.StringVar()
         entry_usr_name = tk.Entry(face, textvariable=var_usr_name, font=('Arial', 14))
         entry_usr_name.place(x=120, y=20)
-        
+
         var_usr_pwd = tk.StringVar()
         entry_usr_pwd = tk.Entry(face, textvariable=var_usr_pwd, font=('Arial', 14), show='*')
         entry_usr_pwd.place(x=120, y=70)
@@ -81,8 +87,8 @@ class Talentback:
             password_str = entry_usr_pwd.get()
             if not phone_str or not password_str:
                 tips.set('请输入账户密码')
-                return 
-                
+                return
+
             data = {
                 "phone": entry_usr_name.get(),
                 "password": entry_usr_pwd.get()
@@ -90,9 +96,9 @@ class Talentback:
             headers = {
                 "Content-Type": "application/json"
             }
-            req_obj = requests.post(self.base_url+"api/v1/accounts/login/", json=data, headers=headers)
+            req_obj = requests.post(self.base_url + "api/v1/accounts/login/", json=data, headers=headers)
             req_data = json.loads(req_obj.content)
-            rc = req_obj.status_code            
+            rc = req_obj.status_code
             if str(rc).startswith('4'):
                 tips.set(req_data.get("detail"))
                 return
@@ -102,8 +108,8 @@ class Talentback:
                 self.main_face()
                 logger.info(req_data)
 
-        login_button = tk.Button(face, text='登录',  width=10, command=go_login)
-        exit_button = tk.Button(face, text='退出',  width=10, command=self.window.destroy)
+        login_button = tk.Button(face, text='登录', width=10, command=go_login)
+        exit_button = tk.Button(face, text='退出', width=10, command=self.window.destroy)
         login_button.place(x=100, y=110)
         exit_button.place(x=180, y=110)
         # {
@@ -116,7 +122,7 @@ class Talentback:
             "Content-Type": "application/json",
             "Authorization": self.token
         }
-        req_obj = requests.get(self.base_url+"api/v1/helper/get-method/", headers=headers)
+        req_obj = requests.get(self.base_url + "api/v1/helper/get-method/", headers=headers)
         req_data = json.loads(req_obj.content)
         return req_data
 
@@ -125,12 +131,12 @@ class Talentback:
             "Content-Type": "application/json",
             "Authorization": self.token
         }
-        req_obj = requests.get(self.base_url+"api/v1/helper/get-wellcome/", headers=headers)
+        req_obj = requests.get(self.base_url + "api/v1/helper/get-wellcome/", headers=headers)
         return json.loads(req_obj.content)
 
     def create_method(self, method_list):
         func_template = '''def {func_name}(self):
-            this_frame = tk.LabelFrame(self.main_frame, text='操作')
+            this_frame = tk.LabelFrame(self.main_frame, text='{title}')
             this_frame.pack(side='left', expand='yes', fill='both')
             self.now_frame = this_frame                           
             args = {args}
@@ -225,12 +231,12 @@ class Talentback:
             url = method['url']
             req_method = method['method'].lower()
             args = method['args']
-            func_str = func_template.format(func_name=func_name, url=url, method=req_method, args=args)
+            title = method['title']
+            func_str = func_template.format(func_name=func_name, url=url, method=req_method, args=args, title=title)
             exec(func_str)
             func = locals()[func_name]
             setattr(self, func_name, func)
             i += 1
- 
 
     def main_face(self):
         self.window.geometry('400x380')
@@ -251,18 +257,18 @@ class Talentback:
             this_func_name = 'go_{}'.format(this_index)
             this_func = getattr(self, this_func_name)
             this_func(self)
-        
 
         left_frame = tk.LabelFrame(self.main_frame, text='选择功能')
         left_frame.pack(side='left', fill='both', padx=3)
         wellcome_frame = tk.LabelFrame(self.main_frame, text='操作')
         wellcome_frame.pack(side='left', expand='yes', fill='both')
-        tk.Label(wellcome_frame, text=wellcome_str, font=('Arial', 11), wraplength=260, anchor='center').place(x=13, y=13)
+        tk.Label(wellcome_frame, text=wellcome_str, font=('Arial', 11), wraplength=260, anchor='center').place(x=13,
+                                                                                                               y=13)
         self.now_frame = wellcome_frame
 
         listbox = tk.Listbox(
-            left_frame, width=12, font=('Arial', 10), 
-            listvariable=tk.StringVar(value=[i['title'] for i in method_list]), 
+            left_frame, width=12, font=('Arial', 10),
+            listvariable=tk.StringVar(value=[i['title'] for i in method_list]),
             selectmode="browse"
         )
         listbox.pack(side='left', fill='both')
@@ -277,10 +283,11 @@ class Talentback:
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
-    logger.setLevel(level = logging.INFO)
+    logger.setLevel(level=logging.INFO)
     handler = logging.FileHandler("达人推助手日志.txt")
     handler.setLevel(logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     Talentback()
+
